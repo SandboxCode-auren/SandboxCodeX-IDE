@@ -1,0 +1,17 @@
+{
+  "name": "sandboxcodex",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.12.0",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "lint": "pnpm --filter web lint",
+    "doctor": "bash scripts/doctor.sh",
+    "clean": "bash scripts/clean.sh",
+    "reset": "bash scripts/reset.sh"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.5"
+  }
+}

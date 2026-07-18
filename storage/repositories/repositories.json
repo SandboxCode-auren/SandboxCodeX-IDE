@@ -1,0 +1,23 @@
+[
+  {
+    "id":"1",
+    "name":"frontend",
+    "branch":"main",
+    "status":"READY",
+    "favorite":true
+  },
+  {
+    "id":"2",
+    "name":"backend",
+    "branch":"develop",
+    "status":"RUNNING",
+    "favorite":false
+  },
+  {
+    "id":"3",
+    "name":"mobile-app",
+    "branch":"main",
+    "status":"WAITING",
+    "favorite":false
+  }
+]
