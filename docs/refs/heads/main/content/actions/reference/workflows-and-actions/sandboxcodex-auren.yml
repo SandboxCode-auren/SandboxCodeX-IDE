@@ -1,0 +1,47 @@
+
+name: sandboxcodex-auren
+
+on: [push]
+
+jobs:
+  run-and-fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cấp quyền cho Agent push code lên lại GitHub
+
+    steps:
+      - name: Checkout mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài đặt Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Cài đặt thư viện AI
+        run: pip install openai
+
+      - name: Chạy thử nghiệm code dự án
+        id: run_code
+        continue-on-error: true # Nếu code lỗi thì không làm sập quy trình, chạy tiếp bước dưới
+        run: |
+          # Giả sử file code chính của bạn tên là main.py
+          python main.py 2> error.log
+
+      - name: Gọi AI Agent sửa lỗi (Nếu chạy thất bại)
+        if: steps.run_code.outcome == 'failure'
+        env:
+          OPENAI_API_KEY: ${{ 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 }}
+        run: |
+          echo "Phát hiện lỗi hệ thống! Đang gọi sandboxcodex-auren Agent..."
+          python agent_fixer.py
+
+      - name: Tự động Commit và Push code đã sửa lên GitHub
+        if: steps.run_code.outcome == 'failure'
+        run: |
+          git config --global user.name "sandboxcodex-bot"
+          git config --global user.email "sandboxcodex@bot.com"
+          git add .
+          git commit -m "sandboxcodex-auren: Tự động vá lỗi thành công"
+          git push
+
