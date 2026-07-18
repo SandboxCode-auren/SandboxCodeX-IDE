@@ -1,0 +1,46 @@
+name: Auto Agent Fixer
+
+on: [push]
+
+jobs:
+  run-and-fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cho phép Agent push code lên lại
+
+    steps:
+      - name: Checkout mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Thiết lập môi trường (Ví dụ Python)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Cài đặt thư viện cần thiết
+        run: pip install openai
+
+      - name: Chạy thử nghiệm code của bạn
+        id: run_code
+        continue-on-error: true # Quan trọng: Nếu lỗi vẫn chạy tiếp bước sau
+        run: |
+          # Chạy file của bạn và lưu log nếu lỗi
+          python main.py 2> error.log
+
+      - name: Kiểm tra nếu có lỗi và gọi AI Agent
+        if: steps.run_code.outcome == 'failure'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ERROR_LOG: ${{ cat error.log }}
+        run: |
+          echo "Phát hiện lỗi! Đang gọi Agent để sửa..."
+          python agent_fixer.py
+
+      - name: Tự động Commit và Push code đã sửa lên lại
+        if: steps.run_code.outcome == 'failure'
+        run: |
+          git config --global user.name "AI-Agent-Bot"
+          git config --global user.email "agent@bot.com"
+          git add .
+          git commit -m "AI Agent: Tự động sửa lỗi code"
+          git push
