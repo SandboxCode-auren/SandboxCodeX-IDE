@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth/core": "^0.34.3",
+    "@auth/core": "^0.41.3",
     "bcryptjs": "^3.0.3",
     "next": "^16.2.0",
     "next-auth": "^4.24.14",
